@@ -1,0 +1,72 @@
+Hive Practical questions:-
+
+1. Hive Join operations
+
+Create a  table named CUSTOMERS(ID | NAME | AGE | ADDRESS   | SALARY)
+Create a Second  table ORDER(OID | DATE | CUSTOMER_ID | AMOUNT
+
+Now perform different joins operations on top of these tables
+(Inner JOIN, LEFT OUTER JOIN ,RIGHT OUTER JOIN ,FULL OUTER JOIN)
+
+Ans :- Wright a data in vim editor and store in hdfs,
+create a customer table :-
+     create table if not exists customer_data
+     (
+     id int,
+     name string,
+     age int,
+     address string,
+     salary int
+     )
+     row format delimited
+     fields terminated by ',';
+     
+now load a data in hdfs :-
+load data inpath '/tmp/hive_data/customer_data.csv' into table customer_data;
+
+create order table :-
+     create table if not exists order_data_v1
+     (
+     oid int,
+     date_id string,
+     customer_id int,
+     amount int
+     )
+     row format delimited
+     fields terminated by ',';
+load data :-
+ load data inpath '/tmp/hive_data/order.csv' into table order_data_v1;
+
+Now perfon join querys :-
+     select
+     c.id,
+     c.name,
+     c.age,
+     o.amount
+     from customer_data c join order_data_v1 o
+     on (c.id = o.customer_id);
+result :-
+c.id    c.name  c.age   o.amount
+1       sumit   19      20
+2       Aadi    6       25
+3       Sangeet 20      30
+4       Ajay    22      35
+
+Now left outer join query :-
+     select
+     c.id,
+     c.name,
+     o.amount,
+     o.date_id
+     from customer_data c
+     left outer join order_data_v1 o
+     on (c.id = o.customer_id);
+result:-
+c.id    c.name  o.amount        o.date_id
+1       sumit   20      01-09-2022
+2       Aadi    25      02-09-2022
+3       Sangeet 30      03-09-2022
+4       Ajay    35      04-09-2022
+
+Now right outer join :-
+
