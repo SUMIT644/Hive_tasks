@@ -10,7 +10,7 @@ Now perform different joins operations on top of these tables
 
 Ans :- Wright a data in vim editor and store in hdfs,
 create a customer table :-
-     create table if not exists customer_data
+     create table if not exists customer_csv
      (
      id int,
      name string,
@@ -22,10 +22,10 @@ create a customer table :-
      fields terminated by ',';
      
 now load a data in hdfs :-
-load data inpath '/tmp/hive_data/customer_data.csv' into table customer_data;
+load data inpath '/tmp/hive_data/customer.csv' into table customer_csv;
 
 create order table :-
-     create table if not exists order_data_v1
+     create table if not exists order_csv
      (
      oid int,
      date_id string,
@@ -35,38 +35,92 @@ create order table :-
      row format delimited
      fields terminated by ',';
 load data :-
- load data inpath '/tmp/hive_data/order.csv' into table order_data_v1;
+ load data inpath '/tmp/hive_data/order.csv' into table order_csv;
 
 Now perfon join querys :-
+
+inner join:-
      select
      c.id,
      c.name,
      c.age,
+     o.oid,
      o.amount
-     from customer_data c join order_data_v1 o
+     from customer_csv c inner join order_csv o
      on (c.id = o.customer_id);
 result :-
-c.id    c.name  c.age   o.amount
-1       sumit   19      20
-2       Aadi    6       25
-3       Sangeet 20      30
-4       Ajay    22      35
+c.id    c.name  c.age   o.oid   o.amount
+3       Ajay    21      1001    500
+5       manjeet 25      1002    200
+2       Aadi    5       1003    300
+4       sanjeet 22      1004    100
+1       sumit   19      1005    50
+5       manjeet 25      1006    600
+4       sanjeet 22      1008    345
+2       Aadi    5       1009    432
+1       sumit   19      1010    453
+
 
 Now left outer join query :-
+     select,
+     c.name,
+     c.age,
+     o.oid,
+     o.amount
+     from customer_csv c
+     left outer join order_csv o
+     on (c.id = o.customer_id);
+result:-
+sumit   19      1010    453
+sumit   19      1005    50
+Aadi    5       1009    432
+Aadi    5       1003    300
+Ajay    21      1001    500
+sanjeet 22      1008    345
+sanjeet 22      1004    100
+manjeet 25      1006    600
+manjeet 25      1002    200
+
+Now right outer join :-
      select
      c.id,
      c.name,
-     o.amount,
-     o.date_id
-     from customer_data c
-     left outer join order_data_v1 o
-     on (c.id = o.customer_id);
-result:-
-c.id    c.name  o.amount        o.date_id
-1       sumit   20      01-09-2022
-2       Aadi    25      02-09-2022
-3       Sangeet 30      03-09-2022
-4       Ajay    35      04-09-2022
+     o.oid,
+     o.amount
+     from customer_csv c
+     right outer join order_csv o
+     on ( c.id = o.customer_id);
+     
+     result :- 
+c.id    c.name  o.oid   o.amount
+3       Ajay    1001    500
+5       manjeet 1002    200
+2       Aadi    1003    300
+4       sanjeet 1004    100
+1       sumit   1005    50
+5       manjeet 1006    600
+4       sanjeet 1008    345
+2       Aadi    1009    432
+1       sumit   1010    453
 
-Now right outer join :-
+now full outer join :-
+     select
+     c.name,
+     c.age,
+     o.oid
+     from customer_csv c
+     full outer join order_csv o
+     on ( c.id = o.customer_id);
+     
+     result :- 
+c.name  c.age   o.oid
+sumit   19      1010
+sumit   19      1005
+Aadi    5       1009
+Aadi    5       1003
+Ajay    21      1001
+sanjeet 22      1008
+sanjeet 22      1004
+manjeet 25      1006
+manjeet 25      1002
 
